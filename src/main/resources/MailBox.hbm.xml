@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 6 f?vr. 2012 17:25:10 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+
+	<class name="com.vaadin.demo.mobilemail.data.MailBox" table="mailbox">
+
+		<id name="mb" type="java.lang.Long">
+			<generator class="increment" />
+		</id>
+
+		<property name="userName" type="java.lang.String" update="true"
+			insert="true" access="property" column="userName" />
+
+		<property name="emailAddress" type="java.lang.String" update="true"
+			insert="true" access="property" column="emailAddress" />
+
+		<property name="password" type="java.lang.String" update="true"
+			insert="true" access="property" column="password" />
+
+		<property name="incoming" type="java.lang.String" update="true"
+			insert="true" access="property" column="incoming" />
+
+		<property name="outcoming" type="java.lang.String" update="true"
+			insert="true" access="property" column="outcoming" />
+
+		<property name="name" type="java.lang.String" update="true"
+			insert="true" access="property" column="name" />
+
+	</class>
+
+</hibernate-mapping>
