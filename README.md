@@ -1,7 +1,8 @@
-Spring Sample
+Mobile mail Sample
 =============
 
-This is a Java sample.
+This is a Java sample using Vaading Framework.  It does not use Spring so there is a StackatoServices
+class that gets database informations and uses it for Hibernate.
 
 Deploying the Application
 -------------------------
