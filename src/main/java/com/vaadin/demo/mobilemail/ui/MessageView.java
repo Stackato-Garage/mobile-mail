@@ -213,7 +213,7 @@ public class MessageView extends AbstractNavigationView implements
 			detailsLayout.setVisible(false);
 			layout.addComponent(detailsLayout);
 
-			for (String to : message.getTo()) {
+			for (String to : message.getTos()) {
 				lbl = new Label("To : ");
 				lbl.setStyleName("light-text");
 				lbl.setSizeUndefined();
@@ -258,12 +258,12 @@ public class MessageView extends AbstractNavigationView implements
 			layout.addComponent(lbl);
 
 			String contentType = message.getContentType();
-			int ct = Label.CONTENT_XHTML;
-			if (contentType.equals("text/plain")) {
-				ct = Label.CONTENT_PREFORMATTED;
-			}
-
-			Label label = new Label(message.getBody(), ct);
+			int ct = Label.CONTENT_PREFORMATTED;
+			if (message.isHtml())
+				ct = Label.CONTENT_XHTML;
+			
+			Label label = new Label(message.getBody(),ct);
+			
 			layout.addComponent(label);
 
 			removeStyleName("no-message");

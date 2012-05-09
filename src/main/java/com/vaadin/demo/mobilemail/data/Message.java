@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags.Flag;
@@ -15,17 +14,60 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMultipart;
 
-public class Message extends AbstractPojo {
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
+import com.itextpdf.text.html.HtmlEncoder;
+
+public class Message extends AbstractPojo implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
 	private javax.mail.Message message;
 
-	private boolean textIsHtml = false;
+	private boolean isHtml = false;
+
+	public boolean isHtml() {
+		return isHtml;
+	}
+
+	private String from = new String();
+	private StringBuffer body = new StringBuffer();
+	private String subject = new String();
+	private Date sentDate;
+	private List<String> tos = new ArrayList<String>();
+	private String replyTo = new String();
 
 	public Message(javax.mail.Message message) {
 		this.setMessage(message);
+		Thread run = new Thread(this);
+		run.start();
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public String getBody() {
+		return body.toString();
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public Date getSentDate() {
+		return sentDate;
+	}
+
+	public List<String> getTos() {
+		return tos;
+	}
+
+	public String getReplyTo() {
+		return replyTo;
 	}
 
 	public javax.mail.Message getMessage() {
@@ -34,123 +76,6 @@ public class Message extends AbstractPojo {
 
 	public void setMessage(javax.mail.Message message) {
 		this.message = message;
-	}
-
-	public String getSubject() {
-		String header = "";
-		try {
-			if (message.getSubject() != null) {
-				header = message.getSubject().toString();
-			}
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return header;
-	}
-
-	public Date getSentDate() {
-		Date date = new Date();
-		try {
-			date = message.getSentDate();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return date;
-	}
-
-	public String getFrom() {
-		String from = "";
-		try {
-			from = InternetAddress.toString(message.getFrom());
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return from;
-	}
-
-	public List<String> getTo() {
-		List<String> toAddresses = new ArrayList<String>();
-		Address[] recipients;
-		try {
-			recipients = message
-					.getRecipients(javax.mail.Message.RecipientType.TO);
-
-			for (Address address : recipients) {
-				toAddresses.add(address.toString());
-			}
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return toAddresses;
-	}
-
-	public String getReplyTo() {
-		String to = null;
-		try {
-			to = InternetAddress.toString(message.getReplyTo());
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return to;
-	}
-
-	public String getBody() {
-		String body = "";
-
-		Object content;
-		try {
-			content = message.getContent();
-			if (content instanceof String) {
-				body = content.toString();
-			} else {
-				Multipart multipart = (Multipart) content;
-				for (int x = 0; x < multipart.getCount(); x++) {
-					BodyPart p = multipart.getBodyPart(x);
-
-					if (p.isMimeType("text/*")) {
-						String s = (String) p.getContent();
-						textIsHtml = p.isMimeType("text/html");
-						return s;
-					}
-
-					if (p.isMimeType("multipart/alternative")) {
-						// prefer html text over plain text
-						Multipart mp = (Multipart) p.getContent();
-						String text = null;
-						for (int i = 0; i < mp.getCount(); i++) {
-							Part bp = mp.getBodyPart(i);
-							if (bp.isMimeType("text/plain")) {
-								if (text == null)
-									text = bp.getContent().toString();
-								continue;
-							} else if (bp.isMimeType("text/html")) {
-								String s = bp.getContent().toString();
-								if (s != null)
-									return s;
-							} else {
-								return bp.getContent().toString();
-							}
-						}
-						return text;
-					} else if (p.isMimeType("multipart/*")) {
-						Multipart mp = (Multipart) p.getContent();
-						for (int i = 0; i < mp.getCount(); i++) {
-							String s = mp.getBodyPart(i).getContent()
-									.toString();
-							if (s != null)
-								return s;
-						}
-					}
-
-					return null;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		return body;
 	}
 
 	public boolean isNew() {
@@ -188,4 +113,95 @@ public class Message extends AbstractPojo {
 		}
 		return null;
 	}
+
+	public void run() {
+		try {
+			/** SUBJECT **/
+			if (message.getSubject() != null) {
+				subject = message.getSubject().toString();
+			} else {
+				subject = "<<No title>>";
+			}
+
+			/** DATE **/
+			sentDate = message.getSentDate();
+
+			/** FROM **/
+			from = InternetAddress.toString(message.getFrom());
+
+			/** TOS **/
+			Address[] recipients;
+
+			recipients = message
+					.getRecipients(javax.mail.Message.RecipientType.TO);
+
+			for (Address address : recipients) {
+				tos.add(address.toString());
+			}
+
+			/** REPLY TO **/
+			replyTo = InternetAddress.toString(message.getReplyTo());
+
+			/** BODY **/
+			String title = "WayBack Machine: MSFT Access ODBC Error on Software & Information	Industry trade association web site";
+			Object content;
+			content = message.getContent();
+			if(subject.equals(title)){
+				System.out.println("TROUVE");
+			}
+			if (content instanceof String) {
+				body.append(content);
+			} else {
+				Multipart multipart = (Multipart) content;
+				for (int x = 0; x < multipart.getCount(); x++) {
+					BodyPart p = multipart.getBodyPart(x);
+					if (p.isMimeType("text/*")) {
+						String s = (String) p.getContent();
+						if(isHtml)
+							body.append(HtmlEncoder.encode(s));
+					}
+					
+					if (p.isMimeType("multipart/alternative")) {
+						// prefer html text over plain text
+						Multipart mp = (Multipart) p.getContent();
+						String text = null;
+						for (int i = 0; i < mp.getCount(); i++) {
+							Part bp = mp.getBodyPart(i);
+							
+							if (bp.isMimeType("text/plain")) {
+//								if (text == null)
+									text = bp.getContent().toString();
+//								continue;
+							} else if (bp.isMimeType("text/html")) {
+								isHtml = true;
+								text = bp.getContent().toString();
+								text = Jsoup.clean(text, Whitelist.basic());
+							} else {
+								// Files
+								MimeMultipart mm = (MimeMultipart) bp.getContent();
+							}
+							
+						}
+						body.append(text);
+
+					} else if (p.isMimeType("multipart/*")) {
+						Multipart mp = (Multipart) p.getContent();
+						for (int i = 0; i < mp.getCount(); i++) {
+							String s = mp.getBodyPart(i).getContent()
+									.toString();
+							if (s != null)
+								body.append(s);
+						}
+					}
+				}
+			}
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

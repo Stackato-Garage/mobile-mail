@@ -1,15 +1,15 @@
 <module>
-	<!--
-	    This file is automatically updated based on new dependencies by the
-	    goal "vaadin:update-widgetset".
-	-->
+	<!-- This file is automatically updated based on new dependencies by the 
+		goal "vaadin:update-widgetset". -->
 
 	<!-- Inherit DefaultWidgetSet -->
-	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" /> 
+	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
 
-    
 
-    
 
-    <inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
+
+
+	<inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
+
+	<set-property name="user.agent" value="gecko1_8,safari,ie8,opera" />
 </module>

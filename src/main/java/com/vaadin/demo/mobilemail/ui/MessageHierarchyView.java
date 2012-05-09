@@ -159,12 +159,16 @@ public class MessageHierarchyView extends NavigationView implements
 
 		// Add a new item column
 		messagesTable.addGeneratedColumn("new", new Table.ColumnGenerator() {
-
-			private Label lbl = new MessageLabel();
-
 			public Component generateCell(Table source, Object itemId,
 					Object columnId) {
-				return lbl;
+				Message msg = (Message) itemId;
+				if (msg.isNew()) {
+					Label lbl = new Label("&nbsp;", Label.CONTENT_XHTML);
+					lbl.setStyleName("new-marker");
+					lbl.setWidth("-1px");
+					return lbl;
+				}
+				return null;
 			}
 		});
 
@@ -174,7 +178,8 @@ public class MessageHierarchyView extends NavigationView implements
 
 			public Component generateCell(Table source, Object itemId,
 					Object columnId) {
-				MessageButton btn = new MessageButton((Message) itemId);
+				final Message m = (Message) itemId;
+				MessageButton btn = new MessageButton(m);
 				btn.addListener(MessageHierarchyView.this);
 				return btn;
 			}
