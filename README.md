@@ -15,9 +15,9 @@ As it is a Heroku java buildpack, the execution is declared in the Procfile file
 	web:	 java $JAVA_OPTS -jar target/dependency/jetty-runner.jar --port $PORT target/*.war
 
 Important things about this example:
-	* It does not use Spring. So there is a StackatoServices class that gets database informations and uses it for Hibernate. (Therefore, Hibernate configuration is generated dynamically)
-	* It read and send emails without any configuration needed.
-	* It uses Vaadin Touchkit which is mainly targeted for [Webkit-based browsers](http://trac.webkit.org/wiki/Applications%20using%20WebKit). For example, it will not work on Firefox and IE by default. But you can make it work by [adding GWT User Agents in the MobileMailWidgetSet.gwt.xml file](https://vaadin.com/book/-/page/gwt.widgetset.html).
+* It does not use Spring. So there is a StackatoServices class that gets database informations and uses it for Hibernate. (Therefore, Hibernate configuration is generated dynamically)
+* It read and send emails without any configuration needed.
+* It uses Vaadin Touchkit which is mainly targeted for [Webkit-based browsers](http://trac.webkit.org/wiki/Applications%20using%20WebKit). For example, it will not work on Firefox and IE by default. But you can make it work by [adding GWT User Agents in the MobileMailWidgetSet.gwt.xml file](https://vaadin.com/book/-/page/gwt.widgetset.html).
 
 As it is an example, some features are not implemented yet. 
 
