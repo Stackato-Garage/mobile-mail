@@ -33,9 +33,9 @@ public class DataUtil {
 	public DataUtil() {
 		// First, we get the db mail boxes and save them
 		mailBoxes = new ArrayList<MailBox>();
-//		getDBMailBoxesContainer();
+		getDBMailBoxesContainer();
 		// Test
-		 getDummiesMailBoxes();
+		//getDummiesMailBoxes();
 	}
 
 	public static DataUtil getInstance() {
@@ -71,14 +71,6 @@ public class DataUtil {
 	 * Used for test
 	 */
 	public void getDummiesMailBoxes() {
-		
-		MailBox mailbox = new MailBox();
-		mailbox.setEmailAddress("jeremya@activestate.com");
-		mailbox.setIncoming("imap.activestate.com");
-		mailbox.setOutcoming("smtp.activestate.com");
-		mailbox.setName("Gmail");
-		mailbox.setPassword("xenone13");
-		mailbox.setUserName("OSEF");
 		
 		mailBoxes.add(mailbox);
 
