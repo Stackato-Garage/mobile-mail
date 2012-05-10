@@ -11,5 +11,5 @@
 
 	<inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
 
-	<set-property name="user.agent" value="gecko1_8,safari,ie8,opera" />
+	<set-property name="user.agent" value="gecko1_8" />
 </module>

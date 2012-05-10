@@ -71,8 +71,6 @@ public class DataUtil {
 	 * Used for test
 	 */
 	public void getDummiesMailBoxes() {
-		
-		mailBoxes.add(mailbox);
 
 		// Initiate container
 		mailBoxesContainer = new MobileMailContainer();

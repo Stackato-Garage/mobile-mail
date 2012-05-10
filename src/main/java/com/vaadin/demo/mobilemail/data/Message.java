@@ -1,6 +1,8 @@
 package com.vaadin.demo.mobilemail.data;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -115,6 +117,7 @@ public class Message extends AbstractPojo implements Runnable {
 	}
 
 	public void run() {
+		
 		try {
 			/** SUBJECT **/
 			if (message.getSubject() != null) {
@@ -143,12 +146,9 @@ public class Message extends AbstractPojo implements Runnable {
 			replyTo = InternetAddress.toString(message.getReplyTo());
 
 			/** BODY **/
-			String title = "WayBack Machine: MSFT Access ODBC Error on Software & Information	Industry trade association web site";
 			Object content;
 			content = message.getContent();
-			if(subject.equals(title)){
-				System.out.println("TROUVE");
-			}
+			
 			if (content instanceof String) {
 				body.append(content);
 			} else {
@@ -156,41 +156,66 @@ public class Message extends AbstractPojo implements Runnable {
 				for (int x = 0; x < multipart.getCount(); x++) {
 					BodyPart p = multipart.getBodyPart(x);
 					if (p.isMimeType("text/*")) {
-						String s = (String) p.getContent();
-						if(isHtml)
+						String s = p.getContent().toString();
+						if (isHtml)
 							body.append(HtmlEncoder.encode(s));
 					}
-					
+
 					if (p.isMimeType("multipart/alternative")) {
+						
 						// prefer html text over plain text
 						Multipart mp = (Multipart) p.getContent();
 						String text = null;
 						for (int i = 0; i < mp.getCount(); i++) {
 							Part bp = mp.getBodyPart(i);
-							
+
 							if (bp.isMimeType("text/plain")) {
-//								if (text == null)
-									text = bp.getContent().toString();
-//								continue;
+								// if (text == null)
+								text = bp.getContent().toString();
+								// continue;
 							} else if (bp.isMimeType("text/html")) {
 								isHtml = true;
 								text = bp.getContent().toString();
 								text = Jsoup.clean(text, Whitelist.basic());
 							} else {
 								// Files
-								MimeMultipart mm = (MimeMultipart) bp.getContent();
+								// MimeMultipart mm = (MimeMultipart)
+								// bp.getContent();
 							}
-							
+
 						}
 						body.append(text);
 
 					} else if (p.isMimeType("multipart/*")) {
 						Multipart mp = (Multipart) p.getContent();
 						for (int i = 0; i < mp.getCount(); i++) {
-							String s = mp.getBodyPart(i).getContent()
-									.toString();
-							if (s != null)
+							MimeMultipart mm = (MimeMultipart) mp.getBodyPart(i).getContent();
+							for (int j = 0; j < mm.getCount(); j++) {
+								String s = mm.getBodyPart(j).getContent().toString();
 								body.append(s);
+							}
+//							String s = mp.getBodyPart(i).getContent()
+//									.toString();
+//							if (s != null)
+//								body.append(s);
+						}
+					} else {
+						/*
+						 * If we actually want to see the data, and it's not a
+						 * MIME type we know, fetch it and check its Java type.
+						 */
+						Object o = p.getContent();
+						if (o instanceof String) {
+							body.append((String) o);
+						} else if (o instanceof InputStream) {
+							InputStream is = (InputStream) o;
+							StringWriter writer = new StringWriter();
+							int c;
+							while ((c = is.read()) != -1)
+								writer.write(c);
+							body.append(writer.toString());
+						} else {
+							body.append(o.toString());
 						}
 					}
 				}
@@ -202,6 +227,6 @@ public class Message extends AbstractPojo implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
-
 }
