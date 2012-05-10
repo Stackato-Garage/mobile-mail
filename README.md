@@ -1,7 +1,7 @@
 Mobile mail Sample
 =============
 
-This is a Java sample using Vaading Framework. Add your email account (using imap protocol) and read your emails or send one.
+This is a Java sample using Vaadin Framework. Add your email account (using imap protocol) and read your emails or send one.
 
 This application uses a [java buildpack](https://github.com/heroku/heroku-buildpack-java).
 
