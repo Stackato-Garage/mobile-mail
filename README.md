@@ -21,7 +21,7 @@ Important things about this example:
 
 As it is an example, some features are not implemented yet. 
 
-Deploying the Application
+Deploying the Application on Stackato
 -------------------------
 
 To deploy to stackato:
@@ -33,12 +33,25 @@ You can view the application at the 'Application Deployed URL'.
 Building and runnig the Application
 ------------------------
 
-To build the application, make sure you have [Maven](http://maven.apache.org/ "Maven") installed.
+It is possible to build the application either with Ant or Maven.
+
+### Ant
+
+Make sure your have [Ant](http://ant.apache.org/ "Ant") installed.
+Then, *cd* into the root directory and execute:
+
+	ant clean package
+	
+That will create the *mobilemail-0.0.1-SNAPSHOT.war* file within the 'target' directory.
+
+### Maven
+
+Make sure you have [Maven](http://maven.apache.org/ "Maven") installed.
 Then, *cd* into the root directory and execute:
 
 	mvn clean package
 
-That will create the *mobilemail-0.0.1-SNAPSHOT.war* file in the 'target' directory.
+That will create the *mobilemail-0.0.1-SNAPSHOT.war* file within the 'target' directory.
 
 To run the application:
 
